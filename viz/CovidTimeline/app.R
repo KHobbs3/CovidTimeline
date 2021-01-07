@@ -12,14 +12,27 @@ library(shinydashboard)
 library(ggplot2) # graphing
 library(plotly) # interactivity
 
+
 # load data
 load(file = "data/output/covid.rda")  
 load(file = "data/output/interventions.rda")
 
-# curate intervention columns
-interv_sub <- interv[,c(3:9,15,16)]
 
-# Define UI for application that draws a histogram
+# Set Variables -----
+# curate intervention columns
+interv_sub <- interv[,c("Jurisdiction", "health_region", "Date.announced", "Date.implemented", 
+          "Intervention", "Intervention.type", "Intervention.summary", "suggested_industry",
+          "Date", "Source.type")]
+
+# order by date
+interv_sub <- interv_sub[order(interv_sub$Date.implemented),]
+
+# define industry types
+types <- c("Activities", "Fitness", "General merchandise stores", "Nightlife", "Personal care", "Restaurants & eating places")
+
+#-----------------
+
+# Define UI ------
 ui <- fluidPage(
     
     # Application title
@@ -29,19 +42,36 @@ ui <- fluidPage(
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            selectInput("region", "Health Region or Authority:", 
+            selectInput("region", "Health Region or Authority", 
                         choices=sort(unique(master.df$health_reg))),
             helpText("Select a health region or authority."),
+            
+            selectizeInput(inputId = "industry", label = h5("Industry"), 
+                         choices = types,
+                         selected = types,
+                         multiple = T),
+            helpText("Filter by operations impacted by policy interventions."),
             hr(),
-            radioButtons(inputId = "check", label = h5(""), 
-                         choices = list("Cumulative" = "Cumulative", "Daily" = "Daily"),
-                         selected = "Cumulative")
+            radioButtons(inputId = "check", label = h5("Cases"), 
+                         choices = list("Cumulative" = "Cumulative", "Weekly" = "Weekly"),
+                         selected = "Cumulative",
+                         inline = T),
+            
+           hr(),
+          checkboxGroupInput("source", "Source", 
+                      choices=c("Government" = "Government", "CIHI" = "CIHI", "News" = "News"),
+                      selected = c("Government", "CIHI", "News"),
+                      inline = T),
+          helpText("Select policy intervention data source."),
+          hr()
         ),
+
+
         
         # Show a plot of the generated distribution
         mainPanel(
             plotlyOutput("tsPlot"),
-            helpText("Graph shows data from July 22, 2020 - January 6, 2020."),
+            helpText("Graph shows data from July 22, 2020 - January 6, 2021."),
             hr(),            
             tableOutput('table'),
             hr(),
@@ -56,12 +86,12 @@ CIHI; October 21, 2020."),
             tags$br(),
             tags$br(),
             tags$cite('For a complete list of sources pertaining to Covid-19 interventions, download the excel file:'),
-            tags$a(href = "https://github.com/KHobbs3/COVID-Cases-Interventions/blob/main/collection/data/policies/CIHI_closures_openings.xlsx?raw=true", "Excel.")
+            tags$a(href = "https://github.com/KHobbs3/COVID-Cases-Interventions/blob/main/viz/CovidTimeline/data/input/InterventionScan_Nov_Processed.csv", "Excel.")
         )
     )
 )
 
-# Define server logic required to draw a histogram
+# Define server logic -----
 server <- function(input, output, session) {
     
     output$tsPlot <- renderPlotly({
@@ -76,7 +106,7 @@ server <- function(input, output, session) {
         # user input --- checkbox
         if (input$check == "Cumulative"){
             Cases <- reg$cumulative
-        } else if (input$check == "Daily"){
+        } else if (input$check == "Weekly"){
             Cases <- reg$cases
         }
         
@@ -85,7 +115,9 @@ server <- function(input, output, session) {
         
         
         # user input --- filter intervention data
-        interv_sub <- subset(interv_sub, interv_sub$health_region == input$region)
+        interv_sub <- subset(interv_sub, interv_sub$health_region == input$region & interv_sub$Source.type %in% input$source)
+          # by industry tag
+        # interv_sub <- interv_sub[grepl(paste(input$industry,collapse="|")),]
         
         # create plot ---
         g <- ggplot(reg, aes(x=Date, y=Cases))  +
@@ -113,14 +145,18 @@ server <- function(input, output, session) {
     
     # create intervention table
     output$table <- renderTable({
-        
         # user input --- filter intervention data
-         out <- subset(interv_sub, interv_sub$health_region == input$region)
-         out[,c(1,2,4:8)]
-        
+      out <- subset(interv_sub, interv_sub$health_region == input$region & interv_sub$Source.type %in% input$source)
+      
+      # out[grepl(paste(input$industry,collapse="|"),
+      #              interv_sub$suggested_industry),c("Jurisdiction", "health_region", "Date.implemented", "Intervention",
+      #                                                                     "Intervention.type", "Intervention.summary", "suggested_industry", "Source.type")]
+      out[,c("Jurisdiction", "health_region", "Date.implemented", "Intervention",
+                                                 "Intervention.type", "Intervention.summary", "suggested_industry", "Source.type")]
+      
     })
 }
 
 
-# Run the application 
+# Run the application -----
 shinyApp(ui = ui, server = server)

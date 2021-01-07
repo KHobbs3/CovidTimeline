@@ -34,6 +34,7 @@ master.df$cumulative <- as.numeric(as.character(master.df$cumulative))
 master.df$cases <- as.numeric(as.character(master.df$cases))
 
 interv$Date <- as.Date(as.character(interv$Date.implemented),"%Y-%m-%d")
+interv$suggested_industry <- as.character(interv$suggested_industry )
 
 
 # clean column names
