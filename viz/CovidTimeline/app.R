@@ -18,6 +18,8 @@ load(file = "data/output/covid.rda")
 load(file = "data/output/interventions.rda")
 
 
+
+
 # Set Variables -----
 # curate intervention columns
 interv_sub <- interv[,c("Jurisdiction", "health_region", "Date.announced", "Date.implemented", 
@@ -71,7 +73,7 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
             plotlyOutput("tsPlot"),
-            helpText("Graph shows data from July 20, 2020 - February 2, 2021."),
+            helpText("Graph shows data from July 20, 2020 - February 5, 2021."),
             hr(),            
             tableOutput('table'),
             hr(),
