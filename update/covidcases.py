@@ -7,5 +7,3 @@
 import CovidTimeline.collect.cases
 import CovidTimeline.wrangle.cases.mergeHR
 import CovidTimeline.wrangle.cases.top30
-
-

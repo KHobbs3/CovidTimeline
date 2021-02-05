@@ -1,25 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Filter COVID-19 shape data to only contain top 30 Population Centres
-# 
-# ### Data sources:
-# * [Population Centres](https://geosuite.statcan.gc.ca/geosuite/en/index#self) (POPCTRS_30.csv)
-# * [Reference Guide](https://www150.statcan.gc.ca/n1/pub/82-402-x/2017001/rm-cr-eng.htm) for linking population centres to health regions
-# * [Ontario Government](http://www.health.gov.on.ca/en/common/system/services/phu/locations.aspx) 
-# * [Quebec Health Regions](https://www.msss.gouv.qc.ca/en/reseau/regions-sociosanitaires-du-quebec/)
-# 
-# ### Data input:
-# * POPCTRS (POPCTRS_30.csv)
-# * Merged health regions shapefile with case data (mergedHR-MMMDD.shp)
-# 
-# ### Procedure:
-# * **Step 1:** Processing population centres (POPCTRS)
-#     * POPCTRS were sorted according to descending `POPCTRRApop_2016` and the top 30 entries were retained.
-#     * The Reference Guide, Ontario Government, and Quebec Government sources were used to identify which health region a population centre belongs to. This along with the province abbreviation/naming convention used in the COVID-19 time series by the COVID Open Data Working Group were manually inputted into the POPCTRS_30 CSV file.
-# * **Step 2:** Merge top 30 POPCTRS with the shapefile on health region name 
-
-
+# Filter COVID-19 shape data to only contain top 30 Population Centres
 
 import geopandas as gpd
 import pandas as pd

@@ -20,7 +20,7 @@ master <- rgdal::readOGR(
 )
 
 # read intervention data
-interv <- read.csv(paste0(here(), "/data/input/InterventionScan_Nov_Processed.csv"))
+interv <- read.csv(paste0(here(), sprintf("/data/input/InterventionScan_Processed_%s.csv",format(Sys.time(), "%Y-%m-%d"))))
 
 
 
