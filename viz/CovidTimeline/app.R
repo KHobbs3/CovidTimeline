@@ -71,7 +71,7 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
             plotlyOutput("tsPlot"),
-            helpText("Graph shows data from July 22, 2020 - January 6, 2021."),
+            helpText("Graph shows data from July 20, 2020 - February 2, 2021."),
             hr(),            
             tableOutput('table'),
             hr(),
