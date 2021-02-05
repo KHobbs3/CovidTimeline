@@ -4,9 +4,12 @@ collect/data/hr_boundaries/
 wrangle/data/shapefiles/
 update/__pycache__/
 viz/CovidTimeline/rsconnect/
+viz/CovidTimeline/input/
+viz/CovidTimeline/output/gtrends/
 
 # Files to ignore
 viz/CovidTimeline/scratch.R
 viz/CovidTimeline/google_trends.R
 viz/CovidTimeline/CovidTimeline.Rproj
 viz/CovidTimeline/app.R
+
