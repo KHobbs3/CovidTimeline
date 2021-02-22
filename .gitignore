@@ -14,3 +14,6 @@ viz/CovidTimeline/google_trends.R
 viz/CovidTimeline/CovidTimeline.Rproj
 viz/CovidTimeline/app.R
 .DS_Store
+
+wrangle/interventions/CIHIUpdate.py
+wrangle/CIHIUpdate.ipynb
