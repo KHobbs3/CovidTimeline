@@ -15,7 +15,7 @@ class Cases:
     def __call__(self, *args, **kwargs):
         
         return self._fnc(*args, **kwargs)
-       
+
     
 
 @Cases
@@ -30,10 +30,10 @@ def update_cases():
     july20 = daily.loc[daily.date_report >= "2020-07-20"]
     
     # resample to weekly & export
-    july20.groupby(['province','health_region']).resample('W-Mon', on = 'date_report').sum().to_csv('CovidTimeline/collect/data/weekly_ts.csv')
+    july20.groupby(['province','health_region']).resample('W-Mon', on = 'date_report').sum().to_csv('data/weekly_ts.csv')
 
     # export daily cases too
-    daily.to_csv("CovidTimeline/collect/data/daily_ts.csv")
+    daily.to_csv("data/daily_ts.csv")
     
     # print latest update
     latest = dt.datetime.today().strftime("%Y-%m-%d")

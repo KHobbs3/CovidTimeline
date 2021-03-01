@@ -16,12 +16,15 @@ class PopCentres:
     def __call__(self, *args, **kwargs):
         
         return self._fnc(*args, **kwargs)
-    
+
 
 @PopCentres
 def top30():
-    shp = gpd.read_file('CovidTimeline/wrangle/data/shapefiles/mergedHR.shp')
-    popcen = pd.read_csv('CovidTimeline/collect/data/POPCTRS/POPCTRS_30.csv')
+    shp = gpd.read_file('../../wrangle/data/shapefiles/mergedHR.shp')
+    shp.rename(columns = {
+        "Health Reg": "Health Region"
+    }, inplace = True)
+    popcen = pd.read_csv('../../collect/data/POPCTRS/POPCTRS_30.csv')
 
 
     # drop unneccessary columns from population centre csv
@@ -31,7 +34,7 @@ def top30():
            'POPCTRRAir_2016', 'POPCTRRclass', 'POPCTRRApop_2016', 'XPRuid', 'unique'])
 
     # merge and retain only the top 30 population centres in the covid cases shapefile
-    merged = pd.merge(popcen_short, shp, on = 'health_reg', how = 'left')
+    merged = pd.merge(popcen_short, shp, on = 'Health Region', how = 'left')
     
     
     
@@ -45,10 +48,11 @@ def top30():
     # Convert and Export
     final = gpd.GeoDataFrame(merged, geometry='geometry')
 
+    
     latest = dt.datetime.today().strftime("%Y-%m-%d")
     print("Creating file: cases_{}.shp".format(latest))
     
-    final.to_file('CovidTimeline/viz/CovidTimeline/data/input/cases_{}.shp'.format(latest))
-    
+    final.to_file('../../viz/CovidTimeline/data/input/cases_{}.shp'.format(latest))
+
 print(top30())
 

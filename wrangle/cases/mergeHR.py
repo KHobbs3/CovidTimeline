@@ -2,9 +2,9 @@
 # coding: utf-8
 
 # # Merging a shapefile of Canada's health region boundaries with COVID-19 Case timeseries data
-# 
+#
 # ---
-# 
+#
 # ### Data output:
 # Shapefile of Health Regions in Canada and their associated weekly COVID-19 data.
 
@@ -23,7 +23,7 @@ class Merge:
     def __call__(self, *args, **kwargs):
         
         return self._fnc(*args, **kwargs)
-          
+
 
 
 
@@ -31,8 +31,8 @@ class Merge:
 def mergeHR():
 
 
-    weekly = pd.read_csv('CovidTimeline/collect/data/weekly_ts.csv')
-    hr = gpd.read_file('CovidTimeline//collect/data/hr_boundaries/RegionalHealthBoundaries.shp')
+    weekly = pd.read_csv('../../collect/data/weekly_ts.csv')
+    hr = gpd.read_file('../../collect/data/hr_boundaries/RegionalHealthBoundaries.shp')
 
 
     # Cleaning
@@ -180,9 +180,11 @@ def mergeHR():
            'PopOver85'])
 
 
-
+    shp2.rename(columns = {
+        "health_region" : "Health Region"
+    }, inplace = True)
     # extract dates after july 20, 2020
     shp2.date_report = shp2.date_report.astype(str)
-    shp2.to_file('CovidTimeline/wrangle/data/shapefiles/mergedHR.shp')
+    shp2.to_file('../../wrangle/data/shapefiles/mergedHR.shp')
 
 print(mergeHR())

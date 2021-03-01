@@ -21,13 +21,6 @@ load(file = "data/output/interventions.rda")
 
 
 # Set Variables -----
-# curate intervention columns
-interv_sub <- interv[,c("Jurisdiction", "health_region", "Date.announced", "Date.implemented", 
-          "Intervention", "Intervention.type", "Intervention.summary", "suggested_industry",
-          "Date", "Source.type")]
-
-# order by date
-interv_sub <- interv_sub[order(interv_sub$Date.implemented),]
 
 # define industry types
 types <- c("Activities", "Fitness", "General merchandise stores", "Nightlife", "Personal care", "Restaurants & eating places")
@@ -45,7 +38,7 @@ ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
             selectInput("region", "Health Region or Authority", 
-                        choices=sort(unique(master.df$health_reg))),
+                        choices=sort(unique(master.df$`Health Region`))),
             helpText("Select a health region or authority."),
             
             selectizeInput(inputId = "industry", label = h5("Industry"), 
@@ -60,8 +53,8 @@ ui <- fluidPage(
                          inline = T),
             
            hr(),
-          checkboxGroupInput("source", "Source", 
-                      choices=c("Government" = "Government", "CIHI" = "CIHI", "News" = "News"),
+          checkboxGroupInput("source", "Source type", 
+                      choices=c("Government" = "Government", "CIHI" = "CIHI", "News" = "News", "Ontario Data Catalogue"= "Ontario Data Catalogue"),
                       selected = c("Government", "CIHI", "News"),
                       inline = T),
           helpText("Select policy intervention data source."),
@@ -73,7 +66,7 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
             plotlyOutput("tsPlot"),
-            helpText("Graph shows data from July 20, 2020 - February 5, 2021."),
+            helpText(sprintf("Graph shows data from 2021-07-20 - %s.", Sys.Date())),
             hr(),            
             tableOutput('table'),
             hr(),
@@ -87,6 +80,8 @@ ui <- fluidPage(
 CIHI; October 21, 2020."),
             tags$br(),
             tags$br(),
+            tags$cite("Ontario COVID-19 zones - Datasets - Ontario Data Catalogue."),
+            tags$a(href = "https://data.ontario.ca/dataset/ontario-covid-19-zones"),
             tags$cite('For a complete list of sources pertaining to Covid-19 interventions, download the excel file:'),
             tags$a(href = "https://github.com/KHobbs3/COVID-Cases-Interventions/blob/main/viz/CovidTimeline/data/input/InterventionScan_Nov_Processed.csv", "Excel.")
         )
@@ -102,7 +97,7 @@ server <- function(input, output, session) {
         if (input$region == "Ottawa"){
             reg <- subset(master.df, master.df$POPCTRRAna == "Ottawa - Gatineau")
         } else {
-            reg <- subset(master.df, master.df$health_reg == input$region)
+            reg <- subset(master.df, master.df$`Health Region` == input$region)
         }
         
         # user input --- checkbox
@@ -117,7 +112,7 @@ server <- function(input, output, session) {
         
         
         # user input --- filter intervention data
-        interv_sub <- subset(interv_sub, interv_sub$health_region == input$region & interv_sub$Source.type %in% input$source)
+        interv_sub <- subset(interv_sub, interv_sub$`Health Region` == input$region & interv_sub$`Source type` %in% input$source)
           # by industry tag
         # interv_sub <- interv_sub[grepl(paste(input$industry,collapse="|")),]
         
@@ -147,14 +142,11 @@ server <- function(input, output, session) {
     
     # create intervention table
     output$table <- renderTable({
-        # user input --- filter intervention data
-      out <- subset(interv_sub, interv_sub$health_region == input$region & interv_sub$Source.type %in% input$source)
       
-      # out[grepl(paste(input$industry,collapse="|"),
-      #              interv_sub$suggested_industry),c("Jurisdiction", "health_region", "Date.implemented", "Intervention",
-      #                                                                     "Intervention.type", "Intervention.summary", "suggested_industry", "Source.type")]
-      out[,c("Jurisdiction", "health_region", "Date.implemented", "Intervention",
-                                                 "Intervention.type", "Intervention.summary", "suggested_industry", "Source.type")]
+        # user input --- filter intervention data
+      out <- subset(interv_sub, interv_sub$`Health Region` == input$region & interv_sub$`Source type` %in% input$source)
+      out[,c("Jurisdiction", "Health Region", "Implemented", "Intervention",
+                                                 "Type", "Summary", "Industry", "Source type")]
       
     })
 }

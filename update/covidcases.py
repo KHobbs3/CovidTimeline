@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
+# +
+import os
 
-# import CovidTimeline as ct
+os.chdir("../collect/")
+import cases
 
-# COVID-19 Case data update
-import CovidTimeline.collect.cases
-import CovidTimeline.wrangle.cases.mergeHR
-import CovidTimeline.wrangle.cases.top30
+os.chdir("../wrangle/cases/")
+import mergeHR
+import top30
+# -
+
+
