@@ -1,23 +1,16 @@
 #
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
+# COVID-19 cases and interventions shiny app
 #
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
+ 
 library(shiny)
 library(shinydashboard)
 library(ggplot2) # graphing
 library(plotly) # interactivity
 
 
-# load data
+# load data ----
 load(file = "data/output/covid.rda")  
 load(file = "data/output/interventions.rda")
-
-
 
 
 # Set Variables -----
